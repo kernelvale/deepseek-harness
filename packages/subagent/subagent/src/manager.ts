@@ -818,6 +818,12 @@ export class SubagentManager {
       const { create, childId } = inputs
       let structured: StructuredAttachment | undefined
       const setup = async (childCtx: Context, child: Agent): Promise<void> => {
+        if (create?.seed !== undefined) {
+          const { provider, model, reasoningEffort } = inputs.agentOptions
+          if (provider !== undefined && model !== undefined) {
+            child.model.select({ provider, model, ...reasoningEffort === undefined ? {} : { reasoningEffort } })
+          }
+        }
         // Only fresh creation appends the descriptor and delegated policy after
         // the inherited marker; a cold resume replays those persisted events.
         if (inputs.composition.agentPreset !== undefined) {
